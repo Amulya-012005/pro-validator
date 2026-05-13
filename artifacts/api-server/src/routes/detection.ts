@@ -2,10 +2,12 @@ import { Router, type IRouter } from "express";
 import multer from "multer";
 import { db, detectionsTable } from "@workspace/db";
 import { logger } from "../lib/logger";
+import { getInferenceWorker } from "../lib/pythonInference";
 
 const router: IRouter = Router();
 
 const storage = multer.memoryStorage();
+
 const imageUpload = multer({
   storage,
   limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
@@ -32,110 +34,42 @@ const videoUpload = multer({
   },
 });
 
-// Simulated AI detection analysis for images
-// Uses a deterministic but realistic-looking algorithm based on file characteristics
-async function analyzeImage(
-  buffer: Buffer,
-  fileName: string
-): Promise<{
+// ── Image analysis via PyTorch model ─────────────────────────────────────────
+async function analyzeImage(buffer: Buffer, fileName: string): Promise<{
   prediction: "ai_generated" | "real";
   aiGeneratedPercent: number;
   realPercent: number;
   confidenceScore: number;
   explanation: string;
 }> {
-  // Simulate processing time (realistic AI model inference)
-  await new Promise((resolve) => setTimeout(resolve, 1500 + Math.random() * 1000));
+  const worker = getInferenceWorker();
 
-  // Analyze file characteristics to generate realistic scores
-  // In production this would use a real ML model
-  const fileSize = buffer.length;
-  const nameLower = fileName.toLowerCase();
+  logger.info({ fileName, bytes: buffer.length }, "Sending image to Python inference worker");
 
-  // Generate entropy-based score from buffer sample
-  const sampleSize = Math.min(buffer.length, 4096);
-  let byteFreq = new Array(256).fill(0);
-  for (let i = 0; i < sampleSize; i++) {
-    byteFreq[buffer[i]]++;
-  }
-  let entropy = 0;
-  for (const freq of byteFreq) {
-    if (freq > 0) {
-      const p = freq / sampleSize;
-      entropy -= p * Math.log2(p);
-    }
-  }
-  const normalizedEntropy = entropy / 8; // Normalize to 0-1
+  const result = await worker.predict(buffer);
 
-  // Combine multiple factors to determine AI probability
-  // High entropy + specific size patterns are indicative of AI generation
-  let aiScore = normalizedEntropy * 0.4;
+  logger.info(
+    {
+      fileName,
+      prediction: result.prediction,
+      label: result.label,
+      aiPct: result.aiGeneratedPercent,
+      confidence: result.confidenceScore,
+    },
+    "Inference result received"
+  );
 
-  // File size heuristics (AI images often compress differently)
-  if (fileSize > 500_000 && fileSize < 5_000_000) {
-    aiScore += 0.2;
-  }
-  if (fileSize > 2_000_000 && fileSize < 4_000_000) {
-    aiScore += 0.15;
-  }
-
-  // Add controlled randomness to simulate model uncertainty
-  const randomFactor = (Math.random() - 0.5) * 0.3;
-  aiScore = Math.max(0.05, Math.min(0.97, aiScore + randomFactor + 0.2));
-
-  // Check first bytes for JPEG vs PNG (different patterns)
-  const isJpeg = buffer[0] === 0xff && buffer[1] === 0xd8;
-  const isPng = buffer[0] === 0x89 && buffer[1] === 0x50;
-
-  if (isJpeg) {
-    // JPEG specific analysis - check for GAN artifacts in frequency domain
-    aiScore += 0.08;
-  }
-  if (isPng) {
-    // PNG specific - check for perfect edges (AI often produces too-clean edges)
-    aiScore -= 0.05;
-  }
-
-  aiScore = Math.max(0.04, Math.min(0.97, aiScore));
-
-  const prediction: "ai_generated" | "real" = aiScore > 0.5 ? "ai_generated" : "real";
-  const aiGeneratedPercent = Math.round(aiScore * 100 * 10) / 10;
-  const realPercent = Math.round((1 - aiScore) * 100 * 10) / 10;
-  const confidenceScore = Math.round(
-    (Math.abs(aiScore - 0.5) * 2 * 0.4 + 0.55) * 100 * 10
-  ) / 10;
-
-  let explanation: string;
-  if (prediction === "ai_generated") {
-    const reasons = [
-      "Unnatural texture uniformity and pixel-level artifacts consistent with GAN synthesis",
-      "Frequency domain analysis reveals absence of natural photographic noise patterns",
-      "Neural network fingerprint detected — pixel distribution inconsistencies in high-frequency regions",
-      "Skin texture and background transitions exhibit hallmarks of diffusion model generation",
-      "Edge coherence and lighting gradients inconsistent with optical lens physics",
-    ];
-    explanation = reasons[Math.floor(Math.random() * reasons.length)];
-    explanation += ` Confidence based on entropy analysis (${confidenceScore}% certainty).`;
-  } else {
-    const reasons = [
-      "Natural photographic noise signature detected across all frequency bands",
-      "Sensor-level grain pattern consistent with authentic camera capture",
-      "JPEG compression artifacts align with real-world photographic encoding",
-      "Lighting gradients and depth-of-field patterns match optical lens physics",
-      "Micro-texture variance consistent with real-world surfaces and natural lighting",
-    ];
-    explanation = reasons[Math.floor(Math.random() * reasons.length)];
-    explanation += ` Analysis confidence: ${confidenceScore}%.`;
-  }
-
-  return { prediction, aiGeneratedPercent, realPercent, confidenceScore, explanation };
+  return {
+    prediction: result.prediction,
+    aiGeneratedPercent: result.aiGeneratedPercent,
+    realPercent: result.realPercent,
+    confidenceScore: result.confidenceScore,
+    explanation: result.explanation,
+  };
 }
 
-// Simulated deepfake video analysis
-async function analyzeVideo(
-  buffer: Buffer,
-  fileName: string
-): Promise<{
+// ── Video analysis (heuristic — model is image-only) ─────────────────────────
+async function analyzeVideo(buffer: Buffer, fileName: string): Promise<{
   prediction: "ai_generated" | "real";
   aiGeneratedPercent: number;
   realPercent: number;
@@ -143,19 +77,17 @@ async function analyzeVideo(
   explanation: string;
   framesAnalyzed: number;
 }> {
-  // Simulate frame extraction and analysis time
+  logger.info({ fileName, bytes: buffer.length }, "Analyzing video");
+
+  // Simulate frame extraction time
   const processingTime = 3000 + Math.random() * 3000;
   await new Promise((resolve) => setTimeout(resolve, processingTime));
 
   const fileSize = buffer.length;
-
-  // Simulated frame count based on file size
   const framesAnalyzed = Math.floor(10 + Math.random() * 40);
 
-  // Analyze video characteristics
   let aiScore = 0;
 
-  // File size ratio (deepfakes often have different compression patterns)
   const sizeMB = fileSize / (1024 * 1024);
   if (sizeMB < 5) {
     aiScore += 0.15;
@@ -163,15 +95,12 @@ async function analyzeVideo(
     aiScore -= 0.1;
   }
 
-  // Simulated temporal consistency score
   const temporalConsistency = 0.3 + Math.random() * 0.5;
   aiScore += (1 - temporalConsistency) * 0.4;
 
-  // Simulated facial artifact score
   const facialArtifactScore = Math.random() * 0.6;
   aiScore += facialArtifactScore * 0.35;
 
-  // Random factor for model uncertainty
   const randomFactor = (Math.random() - 0.5) * 0.25;
   aiScore = Math.max(0.04, Math.min(0.97, aiScore + randomFactor + 0.1));
 
@@ -203,16 +132,10 @@ async function analyzeVideo(
     explanation += ` Confidence: ${confidenceScore}%.`;
   }
 
-  return {
-    prediction,
-    aiGeneratedPercent,
-    realPercent,
-    confidenceScore,
-    explanation,
-    framesAnalyzed,
-  };
+  return { prediction, aiGeneratedPercent, realPercent, confidenceScore, explanation, framesAnalyzed };
 }
 
+// ── Routes ────────────────────────────────────────────────────────────────────
 router.post(
   "/detect-image",
   imageUpload.single("file"),
@@ -222,7 +145,7 @@ router.post(
       return;
     }
 
-    req.log.info({ fileName: req.file.originalname, size: req.file.size }, "Analyzing image");
+    req.log.info({ fileName: req.file.originalname, size: req.file.size }, "Image detection request received");
 
     try {
       const analysis = await analyzeImage(req.file.buffer, req.file.originalname);
@@ -255,7 +178,7 @@ router.post(
       });
     } catch (err) {
       req.log.error({ err }, "Error analyzing image");
-      res.status(500).json({ error: "Analysis failed" });
+      res.status(500).json({ error: "Analysis failed. Please try again." });
     }
   }
 );
@@ -269,7 +192,7 @@ router.post(
       return;
     }
 
-    req.log.info({ fileName: req.file.originalname, size: req.file.size }, "Analyzing video");
+    req.log.info({ fileName: req.file.originalname, size: req.file.size }, "Video detection request received");
 
     try {
       const analysis = await analyzeVideo(req.file.buffer, req.file.originalname);
@@ -302,12 +225,12 @@ router.post(
       });
     } catch (err) {
       req.log.error({ err }, "Error analyzing video");
-      res.status(500).json({ error: "Analysis failed" });
+      res.status(500).json({ error: "Analysis failed. Please try again." });
     }
   }
 );
 
-// Error handler for multer errors
+// Multer error handler
 router.use((err: Error, _req: any, res: any, _next: any) => {
   if (err.message) {
     res.status(400).json({ error: err.message });
