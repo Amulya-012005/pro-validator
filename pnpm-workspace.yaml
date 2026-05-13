@@ -70,8 +70,11 @@ autoInstallPeers: false
 
 onlyBuiltDependencies:
   - '@swc/core'
+  - '@img/sharp-libvips-linux-x64'
+  - '@img/sharp-linux-x64'
   - esbuild
   - msw
+  - sharp
   - unrs-resolver
 
 overrides:

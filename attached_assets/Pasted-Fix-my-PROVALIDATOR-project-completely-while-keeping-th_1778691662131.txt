@@ -1,0 +1,141 @@
+Fix my PROVALIDATOR project completely while keeping the current futuristic UI and design system intact.
+
+CRITICAL ISSUES TO FIX:
+
+1. Image upload succeeds but Analyze fails
+2. Video detection is unstable
+3. Backend analyze routes are crashing
+4. Prediction pipeline is not properly connected to the trained model
+5. I want a clean runnable stable project
+
+IMPORTANT:
+
+* DO NOT redesign the website again
+* DO NOT change existing layout structure
+* DO NOT change current theme/colors
+* DO NOT touch navigation/routing unnecessarily
+* KEEP the current futuristic glassmorphism UI
+* KEEP the current moving animated background style
+* KEEP current animations and effects
+
+====================================================
+REMOVE VIDEO DETECTION COMPLETELY
+=================================
+
+1. Remove:
+
+* Video Detector page
+* Video upload functionality
+* Video analysis backend
+* Video routes
+* Video API endpoints
+* Video navigation menu item
+
+2. Keep ONLY:
+
+* Home page
+* Image Detection
+* History
+* About
+
+3. Ensure removal does not break routing/navigation.
+
+====================================================
+FIX IMAGE DETECTION COMPLETELY
+==============================
+
+Integrate and stabilize the uploaded trained model:
+
+truth_validator_model.pth
+
+Requirements:
+
+1. Properly load EfficientNet-B0 model
+2. Ensure backend initializes model only once
+3. Fix all analyze/upload crashes
+4. Ensure image analyze works every time
+5. Add proper backend logging
+6. Add full error handling
+7. Prevent request failures
+8. Ensure uploaded image processing works correctly
+9. Verify API responses are successful
+10. Fix frontend/backend connection
+
+====================================================
+MODEL REQUIREMENTS
+==================
+
+Use:
+
+* torch
+* torchvision
+* timm
+* pillow
+
+Required preprocessing:
+
+* RGB conversion
+* Resize 224x224
+* Proper ImageNet normalization
+
+Use:
+
+* model.eval()
+* torch.no_grad()
+* softmax prediction
+
+Prediction outputs:
+
+* REAL IMAGE
+* AI GENERATED IMAGE
+* UNCERTAIN
+
+====================================================
+BUTTON REQUIREMENTS
+===================
+
+Analyze and Reset buttons must ALWAYS remain:
+
+* dark colored
+* futuristic
+* glassmorphism style
+* glowing borders
+* large rounded buttons
+
+Do NOT make buttons bright white.
+
+====================================================
+BACKGROUND REQUIREMENTS
+=======================
+
+Keep and improve highlighted moving animated backgrounds:
+
+* glowing blue/purple/pink particles
+* smooth animated gradients
+* moving futuristic mesh effects
+* animated floating lights
+* premium cyber AI look
+
+Background animation must work smoothly on:
+
+* Home
+* Image Detection
+* History
+* About
+
+====================================================
+FINAL REQUIREMENT
+=================
+
+Before finishing:
+
+1. Check all routes
+2. Verify image upload works
+3. Verify analyze works
+4. Verify trained model loads correctly
+5. Verify frontend and backend communication works
+6. Verify no console/server errors remain
+7. Ensure project is fully runnable and stable on Replit
+
+Most important:
+I need a clean working image deepfake detector website with stable AI prediction and beautiful animated futuristic UI without breaking existing mechanisms.
