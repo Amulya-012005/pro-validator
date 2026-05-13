@@ -1,0 +1,180 @@
+Upgrade and redesign my PROVALIDATOR AI deepfake detection project into a premium futuristic AI platform while keeping all current functionality working.
+
+IMPORTANT:
+
+* Keep all existing pages and routing working
+* Keep the trained model integration intact
+* Keep upload and analyze functionality intact
+* Improve prediction accuracy handling using the uploaded trained model
+* Do NOT break backend functionality
+
+====================================================
+AI MODEL + PREDICTION IMPROVEMENTS
+==================================
+
+1. Use my newly uploaded trained model:
+   truth_validator_model.pth
+
+2. Improve prediction stability and accuracy:
+
+* Better preprocessing
+* Better confidence calibration
+* Reduce false positives
+* Reduce false negatives
+* Add uncertainty handling
+* Use proper softmax scoring
+* Add frame averaging for video analysis
+* Prevent random prediction flipping
+
+3. Prediction outputs should look professional:
+
+* REAL IMAGE
+* AI GENERATED IMAGE
+* REAL VIDEO
+* DEEPFAKE VIDEO
+* UNCERTAIN
+
+4. Confidence percentages should feel realistic and not always 99–100%.
+
+5. Improve backend error handling and stability.
+
+====================================================
+FULL UI / UX REDESIGN
+=====================
+
+Transform the entire website into a futuristic premium AI interface.
+
+Theme:
+
+* Blue + purple + pink cyber aesthetic
+* Futuristic AI vibe
+* Attractive modern glassmorphism UI
+* Premium animations
+* Dynamic moving backgrounds
+* Elegant gradients
+* Neon glow effects
+* Soft blur glass cards
+* Modern rounded UI
+* Smooth hover animations
+
+====================================================
+BACKGROUND ANIMATIONS
+=====================
+
+Add animated moving backgrounds on ALL pages:
+
+* Home page
+* Dashboard
+* Image detection
+* Video detection
+* History page
+* About page
+* Results pages
+
+Background style:
+
+* Floating particles
+* Moving glowing gradients
+* Fishy fluid wave animation
+* Floating neon blobs
+* Animated mesh gradients
+* Smooth motion effects
+* Interactive mouse-reactive background if possible
+
+Colors:
+
+* Purple
+* Neon blue
+* Pink
+* Violet
+* Dark futuristic gradient background
+
+Avoid plain black background.
+
+====================================================
+CARDS + COMPONENTS
+==================
+
+1. Convert all cards into glassmorphism cards:
+
+* Transparent blur cards
+* Soft glow borders
+* Frosted glass effect
+* Premium shadows
+
+2. Make buttons:
+
+* Bigger
+* More rounded
+* Bright glowing colors
+* Smooth hover animation
+* Cushion-style modern buttons
+* Neon blue/purple gradients
+
+3. Add animated transitions everywhere.
+
+====================================================
+TYPOGRAPHY
+==========
+
+Change all font styles into modern futuristic premium fonts.
+
+Requirements:
+
+* Attractive futuristic typography
+* Smooth readable fonts
+* Premium AI startup style
+* Better hierarchy
+* Stylish headings
+* Elegant body text
+
+Suggested font styles:
+
+* Poppins
+* Sora
+* Space Grotesk
+* Orbitron
+* Inter
+
+====================================================
+RESULTS UI
+==========
+
+Redesign prediction result cards:
+
+* Animated confidence meters
+* AI scanning effects
+* Animated percentage bars
+* Real vs AI indicators
+* Smooth reveal animations
+* Futuristic AI analysis visuals
+
+====================================================
+ANIMATION REQUIREMENTS
+======================
+
+Add:
+
+* Framer Motion animations
+* Floating UI motion
+* Glow pulse effects
+* Smooth page transitions
+* Loading animations
+* AI scanning animation
+* Smooth hover scaling
+* Animated borders
+* Floating particles
+
+====================================================
+IMPORTANT
+=========
+
+* Keep the project fully responsive
+* Keep backend working
+* Keep API routes intact
+* Keep upload/analyze flow unchanged
+* Do not remove any current features
+* Do not break trained model integration
+* Keep Replit deployment compatible
+
+Create a polished premium futuristic AI SaaS style experience.

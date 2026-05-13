@@ -15,6 +15,7 @@ export interface InferenceResult {
   realPercent: number;
   confidenceScore: number;
   explanation: string;
+  framesAnalyzed?: number;
 }
 
 class PythonInferenceWorker {
@@ -33,14 +34,11 @@ class PythonInferenceWorker {
       this.readyResolve = res;
       this.readyReject  = rej;
     });
-    // Prevent unhandled rejection crash if worker fails to start
     this.readyPromise.catch(() => {});
     this.start();
   }
 
   private get scriptPath(): string {
-    // At runtime the bundle lives in dist/, so __dirname = artifacts/api-server/dist
-    // inference.py sits one level up at artifacts/api-server/inference.py
     return path.resolve(__dirname, "..", "inference.py");
   }
 
@@ -51,7 +49,6 @@ class PythonInferenceWorker {
       stdio: ["pipe", "pipe", "pipe"],
     });
 
-    // ── stdout: newline-delimited JSON messages ──────────────────────────────
     const rl = createInterface({ input: this.proc.stdout });
     rl.on("line", (line) => {
       if (!line.trim()) return;
@@ -84,18 +81,15 @@ class PythonInferenceWorker {
       }
     });
 
-    // ── stderr: log everything from Python ───────────────────────────────────
     this.proc.stderr.on("data", (chunk: Buffer) => {
       const text = chunk.toString().trim();
       if (text) logger.info({ source: "inference.py" }, text);
     });
 
-    // ── exit handler ─────────────────────────────────────────────────────────
     this.proc.on("exit", (code, signal) => {
       logger.warn({ code, signal }, "Python inference worker exited");
       this.ready = false;
 
-      // Reject all pending requests
       for (const [, cb] of this.pending) {
         cb.reject(new Error("Inference worker exited unexpectedly"));
       }
@@ -104,12 +98,10 @@ class PythonInferenceWorker {
       if (this.restartCount < this.maxRestarts) {
         this.restartCount++;
         logger.info({ attempt: this.restartCount }, "Restarting inference worker");
-        // Fresh ready promise
         this.readyPromise = new Promise((res, rej) => {
           this.readyResolve = res;
           this.readyReject  = rej;
         });
-        // Suppress unhandled rejection on the new promise
         this.readyPromise.catch(() => {});
         setTimeout(() => this.start(), 2000);
       } else {
@@ -141,7 +133,6 @@ class PythonInferenceWorker {
         }
       });
 
-      // 60-second timeout per request
       setTimeout(() => {
         if (this.pending.has(id)) {
           this.pending.delete(id);
@@ -151,12 +142,37 @@ class PythonInferenceWorker {
     });
   }
 
+  async predictFrames(frameBuffers: Buffer[]): Promise<InferenceResult> {
+    await this.readyPromise;
+
+    const id = this.nextId++;
+    const frames = frameBuffers.map((b) => b.toString("base64"));
+
+    return new Promise<InferenceResult>((resolve, reject) => {
+      this.pending.set(id, { resolve, reject });
+
+      const msg = JSON.stringify({ type: "predict_frames", id, frames }) + "\n";
+      this.proc!.stdin.write(msg, (err) => {
+        if (err) {
+          this.pending.delete(id);
+          reject(new Error(`Failed to write frames to inference worker: ${err.message}`));
+        }
+      });
+
+      setTimeout(() => {
+        if (this.pending.has(id)) {
+          this.pending.delete(id);
+          reject(new Error("Frame inference timeout after 120s"));
+        }
+      }, 120_000);
+    });
+  }
+
   isReady(): boolean {
     return this.ready;
   }
 }
 
-// Singleton — constructed once when the module is first imported
 let _worker: PythonInferenceWorker | null = null;
 
 export function getInferenceWorker(): PythonInferenceWorker {
@@ -166,5 +182,4 @@ export function getInferenceWorker(): PythonInferenceWorker {
   return _worker;
 }
 
-// Boot eagerly at module load so the model is warm before the first request
 getInferenceWorker();

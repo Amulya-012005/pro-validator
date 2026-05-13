@@ -1,102 +1,9 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { Scan, Video, Activity, Shield, Cpu, AlertTriangle } from "lucide-react";
+import { Scan, Video, Activity, Shield, Cpu, AlertTriangle, Zap, Eye, Lock } from "lucide-react";
 import { useGetAnalytics } from "@workspace/api-client-react";
-
-function ParticleCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const particles: {
-      x: number; y: number; vx: number; vy: number;
-      size: number; opacity: number; color: string;
-    }[] = [];
-    const colors = ["#00d4ff", "#a855f7", "#06b6d4", "#7c3aed"];
-
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        size: Math.random() * 2.5 + 0.5,
-        opacity: Math.random() * 0.6 + 0.2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-
-    let frame: number;
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw connections
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(0, 212, 255, ${0.12 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Draw particles
-      for (const p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + Math.floor(p.opacity * 255).toString(16).padStart(2, "0");
-        ctx.fill();
-
-        // Glow
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = p.color;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-      }
-
-      frame = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      style={{ pointerEvents: "none" }}
-    />
-  );
-}
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 function AnimatedCounter({ value, label, icon: Icon, color }: {
   value: number; label: string; icon: any; color: string;
@@ -104,7 +11,7 @@ function AnimatedCounter({ value, label, icon: Icon, color }: {
   const [displayed, setDisplayed] = useState(0);
 
   useEffect(() => {
-    const duration = 1200;
+    const duration = 1400;
     const start = Date.now();
     const step = () => {
       const elapsed = Date.now() - start;
@@ -121,24 +28,30 @@ function AnimatedCounter({ value, label, icon: Icon, color }: {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="glass-card rounded-xl p-6 flex items-center gap-4 hover:border-[rgba(0,212,255,0.3)] transition-all"
+      whileHover={{ scale: 1.02, y: -2 }}
+      className="glass-card rounded-2xl p-6 flex items-center gap-4 cursor-default transition-all duration-300 group"
+      style={{ borderColor: `${color}20` }}
       data-testid={`card-stat-${label.toLowerCase().replace(/\s/g, "-")}`}
     >
       <div
-        className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-        style={{ background: `${color}15`, border: `1px solid ${color}40` }}
+        className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110"
+        style={{
+          background: `${color}12`,
+          border: `1px solid ${color}35`,
+          boxShadow: `0 0 20px ${color}20`,
+        }}
       >
         <Icon className="w-6 h-6" style={{ color }} />
       </div>
       <div>
         <div
-          className="text-2xl font-bold font-mono"
-          style={{ color, textShadow: `0 0 10px ${color}60` }}
+          className="text-3xl font-bold font-orbitron"
+          style={{ color, textShadow: `0 0 15px ${color}60` }}
           data-testid={`value-stat-${label.toLowerCase().replace(/\s/g, "-")}`}
         >
           {displayed.toLocaleString()}
         </div>
-        <div className="text-xs text-[rgba(226,232,240,0.5)] uppercase tracking-widest mt-0.5">
+        <div className="text-xs text-[rgba(226,232,240,0.45)] uppercase tracking-widest mt-1 font-sora">
           {label}
         </div>
       </div>
@@ -146,37 +59,44 @@ function AnimatedCounter({ value, label, icon: Icon, color }: {
   );
 }
 
+const features = [
+  {
+    icon: Eye,
+    title: "Neural Pattern Detection",
+    desc: "EfficientNet-based deep feature extraction identifies subtle GAN fingerprints invisible to the human eye",
+    color: "#00d4ff",
+  },
+  {
+    icon: Zap,
+    title: "Real-Time Analysis",
+    desc: "Process images and videos in seconds with our optimized inference pipeline and TTA ensemble",
+    color: "#a855f7",
+  },
+  {
+    icon: Lock,
+    title: "Forensic Confidence Scoring",
+    desc: "Every prediction comes with calibrated confidence scores, uncertainty flags, and detailed explanations",
+    color: "#ec4899",
+  },
+];
+
 export default function Home() {
   const { data: analytics } = useGetAnalytics();
 
   const stats = [
     { label: "Images Analyzed", value: analytics?.totalImages ?? 0, icon: Scan, color: "#00d4ff" },
     { label: "Videos Analyzed", value: analytics?.totalVideos ?? 0, icon: Video, color: "#a855f7" },
-    { label: "AI Generated", value: analytics?.totalAiGenerated ?? 0, icon: AlertTriangle, color: "#f59e0b" },
-    { label: "Real Media", value: analytics?.totalReal ?? 0, icon: Shield, color: "#10b981" },
+    { label: "AI Detected", value: analytics?.totalAiGenerated ?? 0, icon: AlertTriangle, color: "#ec4899" },
+    { label: "Verified Real", value: analytics?.totalReal ?? 0, icon: Shield, color: "#10b981" },
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: "#060a14" }}>
-      {/* Animated background */}
-      <div className="absolute inset-0 cyber-grid opacity-60" />
-      <div className="absolute inset-0">
-        <ParticleCanvas />
-      </div>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "#050810" }}>
+      <AnimatedBackground />
 
-      {/* Radial glow backgrounds */}
-      <div
-        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-[120px] opacity-10 pointer-events-none"
-        style={{ background: "radial-gradient(circle, #00d4ff, transparent)" }}
-      />
-      <div
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[120px] opacity-10 pointer-events-none"
-        style={{ background: "radial-gradient(circle, #a855f7, transparent)" }}
-      />
-
-      <div className="relative z-10 pt-32 pb-20 px-4">
+      <div className="relative z-10 pt-32 pb-24 px-4">
         <div className="max-w-5xl mx-auto">
-          {/* Badge */}
+
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -184,40 +104,31 @@ export default function Home() {
             className="flex justify-center mb-8"
           >
             <div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-semibold tracking-widest uppercase font-sora"
               style={{
-                background: "rgba(0,212,255,0.08)",
-                border: "1px solid rgba(0,212,255,0.25)",
+                background: "rgba(0,212,255,0.07)",
+                border: "1px solid rgba(0,212,255,0.22)",
                 color: "#00d4ff",
+                boxShadow: "0 0 20px rgba(0,212,255,0.12)",
               }}
             >
-              <Cpu className="w-3 h-3" />
+              <Cpu className="w-3.5 h-3.5" />
               Next-Generation AI Security Platform
             </div>
           </motion.div>
 
-          {/* Hero heading */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-            className="text-center mb-6"
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-center mb-7"
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-              <span className="text-white">Advanced AI-Powered</span>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight font-sora">
+              <span className="text-white">Detect</span>
               <br />
-              <span
-                className="bg-clip-text text-transparent"
-                style={{
-                  backgroundImage: "linear-gradient(135deg, #00d4ff 0%, #a855f7 50%, #06b6d4 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                Fake Image & Deepfake
-              </span>
+              <span className="shimmer-text">Deepfakes & AI Media</span>
               <br />
-              <span className="text-white">Video Detection</span>
+              <span className="text-white">Instantly</span>
             </h1>
           </motion.div>
 
@@ -225,24 +136,23 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-center text-[rgba(226,232,240,0.5)] text-lg max-w-2xl mx-auto mb-12"
+            className="text-center text-[rgba(226,232,240,0.5)] text-lg max-w-2xl mx-auto mb-14 leading-relaxed font-sora"
           >
-            Military-grade neural network analysis to identify AI-generated images and deepfake videos
-            with unmatched precision and confidence scoring.
+            Military-grade neural network analysis identifies AI-generated images and deepfake videos
+            with forensic precision, calibrated confidence scoring, and detailed explanations.
           </motion.p>
 
-          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-20"
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-24"
           >
             <Link href="/detect-image">
               <motion.button
-                whileHover={{ scale: 1.04 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
-                className="neon-btn-blue px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-3 justify-center min-w-[220px]"
+                className="neon-btn-blue px-10 py-4 rounded-2xl font-semibold text-lg flex items-center gap-3 justify-center min-w-[230px]"
                 data-testid="button-detect-image"
               >
                 <Scan className="w-5 h-5" />
@@ -251,9 +161,9 @@ export default function Home() {
             </Link>
             <Link href="/detect-video">
               <motion.button
-                whileHover={{ scale: 1.04 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
-                className="neon-btn-purple px-8 py-4 rounded-xl font-semibold text-lg flex items-center gap-3 justify-center min-w-[220px]"
+                className="neon-btn-purple px-10 py-4 rounded-2xl font-semibold text-lg flex items-center gap-3 justify-center min-w-[230px]"
                 data-testid="button-detect-video"
               >
                 <Video className="w-5 h-5" />
@@ -262,25 +172,76 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          {/* Stats grid */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
+            className="mb-16"
           >
             <div className="flex items-center gap-3 mb-6">
-              <Activity className="w-4 h-4 text-[rgba(0,212,255,0.6)]" />
-              <span className="text-xs text-[rgba(226,232,240,0.4)] uppercase tracking-widest">
+              <Activity className="w-4 h-4 text-[rgba(0,212,255,0.5)]" />
+              <span className="text-xs text-[rgba(226,232,240,0.35)] uppercase tracking-widest font-mono">
                 Live Statistics
               </span>
               <div className="flex-1 h-px bg-gradient-to-r from-[rgba(0,212,255,0.2)] to-transparent" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {stats.map((s) => (
-                <AnimatedCounter key={s.label} {...s} />
+              {stats.map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 + i * 0.1 }}
+                >
+                  <AnimatedCounter {...s} />
+                </motion.div>
               ))}
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Shield className="w-4 h-4 text-[rgba(168,85,247,0.5)]" />
+              <span className="text-xs text-[rgba(226,232,240,0.35)] uppercase tracking-widest font-mono">
+                Platform Features
+              </span>
+              <div className="flex-1 h-px bg-gradient-to-r from-[rgba(168,85,247,0.2)] to-transparent" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {features.map((f, i) => {
+                const Icon = f.icon;
+                return (
+                  <motion.div
+                    key={f.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.0 + i * 0.1 }}
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    className="glass-card rounded-2xl p-6 cursor-default transition-all duration-300"
+                    style={{ borderColor: `${f.color}18` }}
+                  >
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+                      style={{
+                        background: `${f.color}12`,
+                        border: `1px solid ${f.color}30`,
+                        boxShadow: `0 0 15px ${f.color}15`,
+                      }}
+                    >
+                      <Icon className="w-5 h-5" style={{ color: f.color }} />
+                    </div>
+                    <h3 className="text-white font-semibold mb-2 font-sora text-sm">{f.title}</h3>
+                    <p className="text-[rgba(226,232,240,0.45)] text-xs leading-relaxed">{f.desc}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+
         </div>
       </div>
     </div>
