@@ -3,13 +3,19 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ProValidator AI fake image and deepfake video detection API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: detection
+    description: AI detection operations
+  - name: history
+    description: Detection history operations
+  - name: analytics
+    description: Analytics operations
 paths:
   /healthz:
     get:
@@ -24,6 +30,121 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /detect-image:
+    post:
+      operationId: detectImage
+      tags: [detection]
+      summary: Detect if an image is AI-generated or real
+      description: Analyzes an uploaded image using AI to determine if it is AI-generated or real
+      responses:
+        "200":
+          description: Detection result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionResult"
+        "400":
+          description: Invalid file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /detect-video:
+    post:
+      operationId: detectVideo
+      tags: [detection]
+      summary: Detect if a video is a deepfake or real
+      description: Analyzes an uploaded video using AI to determine if it is a deepfake or real
+      responses:
+        "200":
+          description: Detection result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionResult"
+        "400":
+          description: Invalid file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /history:
+    get:
+      operationId: getHistory
+      tags: [history]
+      summary: Get detection history
+      description: Returns paginated history of all past detections
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [image, video]
+        - name: result
+          in: query
+          schema:
+            type: string
+            enum: [ai_generated, real]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of detection history entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryResponse"
+
+  /history/{id}:
+    delete:
+      operationId: deleteHistoryEntry
+      tags: [history]
+      summary: Delete a history entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted successfully
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analytics:
+    get:
+      operationId: getAnalytics
+      tags: [analytics]
+      summary: Get analytics summary
+      description: Returns aggregated analytics about all detections
+      responses:
+        "200":
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsData"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +155,162 @@ components:
       required:
         - status
 
+    DetectionResult:
+      type: object
+      required:
+        - id
+        - fileName
+        - fileType
+        - prediction
+        - aiGeneratedPercent
+        - realPercent
+        - confidenceScore
+        - explanation
+        - timestamp
+      properties:
+        id:
+          type: integer
+        fileName:
+          type: string
+        fileType:
+          type: string
+          enum: [image, video]
+        prediction:
+          type: string
+          enum: [ai_generated, real]
+        aiGeneratedPercent:
+          type: number
+        realPercent:
+          type: number
+        confidenceScore:
+          type: number
+        explanation:
+          type: string
+        framesAnalyzed:
+          type: ["integer", "null"]
+        timestamp:
+          type: string
+
+    HistoryEntry:
+      type: object
+      required:
+        - id
+        - fileName
+        - fileType
+        - prediction
+        - aiGeneratedPercent
+        - realPercent
+        - confidenceScore
+        - explanation
+        - timestamp
+      properties:
+        id:
+          type: integer
+        fileName:
+          type: string
+        fileType:
+          type: string
+          enum: [image, video]
+        prediction:
+          type: string
+          enum: [ai_generated, real]
+        aiGeneratedPercent:
+          type: number
+        realPercent:
+          type: number
+        confidenceScore:
+          type: number
+        explanation:
+          type: string
+        framesAnalyzed:
+          type: ["integer", "null"]
+        timestamp:
+          type: string
+
+    HistoryResponse:
+      type: object
+      required:
+        - entries
+        - total
+        - page
+        - limit
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/HistoryEntry"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    AnalyticsData:
+      type: object
+      required:
+        - totalImages
+        - totalVideos
+        - totalAiGenerated
+        - totalReal
+        - imageAiGenerated
+        - imageReal
+        - videoAiGenerated
+        - videoReal
+        - recentActivity
+        - confidenceDistribution
+      properties:
+        totalImages:
+          type: integer
+        totalVideos:
+          type: integer
+        totalAiGenerated:
+          type: integer
+        totalReal:
+          type: integer
+        imageAiGenerated:
+          type: integer
+        imageReal:
+          type: integer
+        videoAiGenerated:
+          type: integer
+        videoReal:
+          type: integer
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityPoint"
+        confidenceDistribution:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfidenceBucket"
+
+    ActivityPoint:
+      type: object
+      required:
+        - date
+        - count
+      properties:
+        date:
+          type: string
+        count:
+          type: integer
+
+    ConfidenceBucket:
+      type: object
+      required:
+        - range
+        - count
+      properties:
+        range:
+          type: string
+        count:
+          type: integer
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string

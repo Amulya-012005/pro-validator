@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "ProValidator"
+version = "1.0.0"
+id = "artifacts/provalidator"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19765
+
+[services.development]
+run = "pnpm --filter @workspace/provalidator run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/provalidator", "run", "build" ]
+publicDir = "artifacts/provalidator/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19765"
+BASE_PATH = "/"

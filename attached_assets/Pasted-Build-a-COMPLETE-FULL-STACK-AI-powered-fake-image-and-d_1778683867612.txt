@@ -1,0 +1,421 @@
+Build a COMPLETE FULL STACK AI-powered fake image and deepfake video detection web application called “ProValidator”.
+
+I want this project to look ULTRA PREMIUM, FUTURISTIC, CYBERPUNK, AI-LAB STYLE, and PROFESSIONALLY DESIGNED like a startup-level AI security platform.
+
+==================================================
+MAIN REQUIREMENT
+================
+
+The system must detect:
+
+1. Fake AI-generated images vs real images
+2. Fake AI-generated/deepfake videos vs real videos
+
+The system must provide:
+
+* Accurate prediction
+* AI-generated percentage
+* Real percentage
+* Confidence score
+* Detection summary
+* Timestamp
+* Proper analysis result
+
+==================================================
+TECH STACK
+==========
+
+Frontend:
+
+* React.js + Vite
+* Tailwind CSS
+* Framer Motion
+* React Router
+* Lucide React Icons
+* Recharts
+
+Backend:
+
+* Python FastAPI
+* Uvicorn
+
+AI/ML:
+
+* PyTorch
+* OpenCV
+* DeepFace
+* HuggingFace pretrained models
+* EfficientNet / ResNet fake image detection
+* Deepfake video detection using frame analysis
+
+Database:
+
+* SQLite
+
+==================================================
+UI / UX DESIGN
+==============
+
+I need TOP-LEVEL UI/UX.
+
+Design must include:
+
+* Glassmorphism
+* Neon glow effects
+* Gravity animated background
+* Floating particles
+* AI scanning animations
+* Cyberpunk dark theme
+* Neural network lines
+* Blur effects
+* Animated glowing cards
+* Holographic effects
+* Smooth transitions
+* Premium futuristic dashboard
+* Dynamic shadows
+* Animated loaders
+* Hover glow effects
+* Smooth page transitions
+
+Color theme:
+
+* Neon Blue
+* Electric Purple
+* Cyan
+* Dark Black
+* Navy Blue
+
+The website should look like:
+“Next-generation AI cyber security dashboard.”
+
+==================================================
+NAVBAR
+======
+
+Create a fixed glass transparent navbar.
+
+LEFT SIDE:
+
+* Logo icon
+* App name: ProValidator
+
+RIGHT SIDE:
+
+1. Home
+2. Image Detector
+3. Video Detector
+4. History
+5. About System
+
+Navbar must:
+
+* Glow on hover
+* Have smooth underline animation
+* Blur glass effect
+
+==================================================
+HOME PAGE / DASHBOARD
+=====================
+
+The first page must be the HOME DASHBOARD.
+
+Add:
+
+* Futuristic hero section
+* Animated AI background
+* Floating glowing particles
+* Neural network animation
+
+Main heading:
+“Advanced AI-powered Fake Image & Deepfake Video Detection”
+
+Buttons:
+
+1. Detect Image
+2. Detect Video
+
+Buttons must:
+
+* Glow
+* Animate on hover
+* Redirect correctly
+
+Add animated stat cards:
+
+* Total Images Analyzed
+* Total Videos Analyzed
+* AI Generated Count
+* Real Media Count
+
+==================================================
+IMAGE DETECTOR PAGE
+===================
+
+When user clicks “Detect Image”:
+Open IMAGE DETECTOR PAGE.
+
+Features:
+
+* Drag & drop upload
+* Upload image from device
+* Image preview
+* Analyze Image button
+* Reset button
+* Back to Home button
+
+Supported formats:
+
+* PNG
+* JPG
+* JPEG
+* WEBP
+
+When user clicks “Analyze Image”:
+
+* Show AI scanning animation
+* Show futuristic loading effect
+* Show neural processing effect
+
+Backend must:
+
+* Analyze uploaded image
+* Detect fake AI patterns
+* Predict:
+
+  * AI Generated
+  * Real Image
+
+RESULT SECTION:
+Display:
+
+* Final Prediction
+* AI Generated %
+* Real %
+* Confidence Score
+* Detection Explanation
+* Timestamp
+
+Example:
+“98.7% probability this image is AI-generated.”
+
+Add:
+
+* Animated circular progress chart
+* Neon result bars
+* Green/red glowing indicators
+
+==================================================
+VIDEO DETECTOR PAGE
+===================
+
+When user clicks “Detect Video”:
+Open VIDEO DETECTOR PAGE.
+
+Features:
+
+* Drag & drop upload
+* Video preview
+* Analyze Video button
+* Reset button
+* Back button
+
+Supported formats:
+
+* MP4
+* MOV
+* AVI
+
+When clicking “Analyze Video”:
+
+* Show cinematic AI scanning animation
+* Frame-by-frame processing effect
+* Neural loading animation
+
+Backend must:
+
+* Extract frames using OpenCV
+* Analyze deepfake indicators
+* Detect manipulated video patterns
+
+RESULT PANEL:
+Display:
+
+* Final Prediction
+* AI-generated probability
+* Real probability
+* Confidence graph
+* Deepfake analysis summary
+* Frame analysis details
+
+Add:
+
+* Animated waveform
+* Cyber scan line
+* Holographic loading effect
+
+==================================================
+HISTORY PAGE
+============
+
+Create a HISTORY DASHBOARD.
+
+Store all detections in SQLite database.
+
+Display:
+
+* File name
+* Detection type
+* Result
+* Confidence %
+* Date & Time
+
+Features:
+
+* Search history
+* Filter by image/video
+* Filter by AI-generated/real
+
+Add:
+
+* Pie chart
+* Bar graph
+* Analytics dashboard
+* Animated stat cards
+
+==================================================
+ABOUT SYSTEM PAGE
+=================
+
+Create a professional ABOUT SYSTEM page.
+
+Explain:
+
+* What is ProValidator
+* How fake image detection works
+* How deepfake video detection works
+* AI workflow
+* Supported file formats
+
+Add WORKFLOW STEPS.
+
+IMAGE DETECTION WORKFLOW:
+
+1. Upload Image
+2. AI Preprocessing
+3. Neural Analysis
+4. Fake Pattern Detection
+5. Prediction Generation
+6. Final Result
+
+VIDEO DETECTION WORKFLOW:
+
+1. Upload Video
+2. Frame Extraction
+3. Deepfake Analysis
+4. Artifact Detection
+5. Confidence Calculation
+6. Final Result
+
+==================================================
+BACKEND API REQUIREMENTS
+========================
+
+Create APIs:
+
+POST /api/detect-image
+POST /api/detect-video
+GET /api/history
+GET /api/analytics
+
+==================================================
+AI MODEL REQUIREMENTS
+=====================
+
+IMPORTANT:
+Do NOT use fake random predictions.
+
+Use REAL AI DETECTION LOGIC.
+
+IMAGE DETECTION:
+
+* EfficientNet / ResNet
+* CNN classifier
+* HuggingFace pretrained fake image detector
+* OpenCV preprocessing
+
+VIDEO DETECTION:
+
+* Frame extraction
+* Face artifact analysis
+* Deepfake indicators
+* CNN + LSTM approach
+
+Use:
+
+* PyTorch
+* OpenCV
+* DeepFace
+* FFmpeg
+
+==================================================
+LOADING EFFECTS
+===============
+
+During detection:
+
+* AI neural scanning effect
+* Animated progress bar
+* “Analyzing using neural AI engine...” text
+* Cyberpunk loader animation
+
+==================================================
+ERROR HANDLING
+==============
+
+Implement:
+
+* File validation
+* Invalid format handling
+* Upload size validation
+* API error handling
+* Proper loading states
+
+==================================================
+RESPONSIVE DESIGN
+=================
+
+The project must work perfectly on:
+
+* Desktop
+* Tablet
+* Mobile
+
+==================================================
+FINAL REQUIREMENTS
+==================
+
+Generate COMPLETE WORKING CODE.
+
+Include:
+
+* Frontend
+* Backend
+* Database
+* APIs
+* Routing
+* All imports
+* requirements.txt
+* package.json
+* README.md
+* Proper folder structure
+
+The application must be:
+
+* Fully working
+* Professional
+* Attractive
+* Demo-ready
+* Error-free
+* Smooth and futuristic
+
+The final result must impress during project review and look like a real AI startup product.
