@@ -56,9 +56,9 @@ except ImportError as e:
 DEVICE = torch.device("cpu")
 
 # ── Decision boundaries ───────────────────────────────────────────────────────
-UNCERTAIN_LOW         = 0.40   # ensemble score < this → real
-UNCERTAIN_HIGH        = 0.60   # ensemble score > this → ai_generated
-SIGNAL_STD_THRESHOLD  = 0.22   # high inter-signal disagreement → uncertain
+UNCERTAIN_LOW         = 0.45   # ensemble score < this → real
+UNCERTAIN_HIGH        = 0.55   # ensemble score > this → ai_generated
+SIGNAL_STD_THRESHOLD  = 0.30   # high inter-signal disagreement → uncertain
 
 # ── EfficientNet transforms (3-crop TTA) ──────────────────────────────────────
 _NORM = dict(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])

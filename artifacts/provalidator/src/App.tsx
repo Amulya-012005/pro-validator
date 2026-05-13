@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
 import Home from "@/pages/Home";
 import DetectImage from "@/pages/DetectImage";
-import DetectVideo from "@/pages/DetectVideo";
 import History from "@/pages/History";
 import About from "@/pages/About";
 import NotFound from "@/pages/not-found";
@@ -26,7 +25,6 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/detect-image" component={DetectImage} />
-        <Route path="/detect-video" component={DetectVideo} />
         <Route path="/history" component={History} />
         <Route path="/about" component={About} />
         <Route component={NotFound} />

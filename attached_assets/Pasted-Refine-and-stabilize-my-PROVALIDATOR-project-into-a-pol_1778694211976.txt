@@ -1,0 +1,166 @@
+Refine and stabilize my PROVALIDATOR project into a polished professional review-ready AI forensic platform.
+
+IMPORTANT:
+
+* Keep current working image detection functionality
+* Keep trained model integration intact
+* Do NOT break upload/analyze system
+* Focus on UI polish, stability, and presentation quality
+
+====================================================
+REMOVE VIDEO DETECTION COMPLETELY
+=================================
+
+1. Remove:
+
+* Video Detector page
+* Video detection routes
+* Video upload logic
+* Video navigation button
+* Video backend/API
+* Video analysis components
+
+2. Keep ONLY:
+
+* Home
+* Image Detector
+* History
+* About
+
+====================================================
+THEME REDESIGN
+==============
+
+Remove the overly dark black theme.
+
+Replace with:
+
+* futuristic bright premium AI theme
+* glowing blue/purple/pink gradients
+* bright cyber aesthetic
+* soft luminous backgrounds
+* visually attractive AI SaaS style
+
+Theme colors:
+
+* electric blue
+* neon cyan
+* purple
+* pink
+* violet gradients
+
+Avoid plain black everywhere.
+
+====================================================
+BACKGROUND DESIGN
+=================
+
+Add highlighted animated moving backgrounds on ALL pages:
+
+* floating glowing particles
+* animated gradient mesh
+* moving light streaks
+* smooth wave animation
+* futuristic cyber glow effects
+* soft animated neon orbs
+
+Background should feel:
+
+* premium
+* bright
+* futuristic
+* alive
+* dynamic
+
+====================================================
+GLASSMORPHISM UI
+================
+
+Convert all cards into premium glass cards:
+
+* frosted blur effect
+* glowing edges
+* soft shadows
+* transparent layered UI
+
+====================================================
+BUTTON DESIGN
+=============
+
+Analyze and Reset buttons:
+
+* large rounded buttons
+* glowing borders
+* dark blue/purple gradient
+* soft hover animations
+* premium futuristic look
+
+====================================================
+TYPOGRAPHY
+==========
+
+Use premium futuristic fonts:
+
+* Sora
+* Poppins
+* Space Grotesk
+* Orbitron
+
+Improve:
+
+* heading hierarchy
+* spacing
+* font weight
+* readability
+
+====================================================
+IMAGE DETECTION IMPROVEMENTS
+============================
+
+1. Keep ensemble AI analysis pipeline intact.
+
+2. Improve confidence calibration.
+
+3. Reduce excessive UNCERTAIN results.
+
+4. Use:
+
+* REAL IMAGE
+* AI GENERATED IMAGE
+* UNCERTAIN
+
+5. Keep realistic confidence percentages.
+
+====================================================
+REVIEW DEMO REQUIREMENTS
+========================
+
+Make the project look like a professional AI forensic platform suitable for:
+
+* final year project review
+* hackathon demo
+* AI startup prototype
+
+Add:
+
+* smooth animations
+* loading transitions
+* AI scanning effects
+* animated analysis cards
+* polished result display
+
+====================================================
+FINAL REQUIREMENTS
+==================
+
+Before finishing:
+
+* verify upload works
+* verify analyze works
+* verify all routes work
+* ensure no backend crashes
+* ensure responsive design
+* ensure polished UI across all pages
+
+Most important:
+Create a stable, visually impressive, professional AI forensic image detection website for project review presentation.
